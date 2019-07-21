@@ -10,7 +10,7 @@ class Gutenberg:
     
     def getWords(self):
         '''
-        Parses file to extract words.
+        Parses file to extract words. Returns list of words.
         Words are sanitized to remove space, special characters,
         punctuations, convert to lowercase, etc. 
         Parsing numbers as words is optional.
@@ -29,6 +29,39 @@ class Gutenberg:
                             word = re.sub('[^A-Za-z]+', '', word)
                             if(word != ''): allWords.append(word)
             return allWords
+        except:
+            print('An error occured trying to read the file.')
+            print(sys.exc_info()[0])
+            exit()
+    
+    def getWordsByChapter(self):
+        '''
+        Parses file to extract words by chapter. 
+        Returns dictionary of hashmap of (word,count) per chapter.
+        Words are sanitized to remove space, special characters,
+        punctuations, convert to lowercase, etc. 
+        Parsing numbers as words is optional.
+        '''
+        wordsByChapter={}
+        chapter = 0
+        try:
+            with open(self.filename, 'r') as file:
+                for line in file:
+                    words = line.split()
+                    if("Chapter" in words and len(words)==2):
+                        chapter+=1
+                    if(chapter>0):
+                        if(len(wordsByChapter)<chapter):
+                            wordsByChapter[chapter] = defaultdict(int)
+                        for word in words: 
+                            word = word.lower()
+                            if(self.countNums):
+                                word = re.sub('[^A-Za-z0-9]+', '', word)
+                                if(word != ''): wordsByChapter[chapter][word]+=1
+                            else:
+                                word = re.sub('[^A-Za-z]+', '', word)
+                                if(word != ''): wordsByChapter[chapter][word]+=1
+            return wordsByChapter
         except:
             print('An error occured trying to read the file.')
             print(sys.exc_info()[0])
@@ -100,7 +133,22 @@ class Gutenberg:
             LeastfreqWords.append([word, num])
         
         return LeastfreqWords
+    
+    def getFrequencyOfWord(self, word):
+        wordsByChapter = self.getWordsByChapter()
+        wordFrequency=[]
+        for chapter in wordsByChapter:
+            if(word in wordsByChapter[chapter]):
+                wordFrequency.append(wordsByChapter[chapter][word])
+            else: wordFrequency.append(0)
+        return wordFrequency
+                
+    
         
-g = Gutenberg("SherlockHolmes.txt", False)
-print(g.get20MostFrequentWords())
-print(g.get20MostInterestingFrequentWords())
+g = Gutenberg("GreatExpectations.txt", False)
+# print(g.getTotalNumberOfWords())
+# print(g.getTotalUniqueWords())
+#print(g.get20MostFrequentWords())
+#print(g.get20MostInterestingFrequentWords())
+# print(g.get20LeastFrequentWords())
+#print(g.getFrequencyOfWord("pip"))
