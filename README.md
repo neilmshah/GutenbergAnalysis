@@ -5,9 +5,9 @@ Interesting analysis on some of the most famous literature works while honing sk
 ### Novel Analyzed: GREAT EXPECTATIONS By CHARLES DICKENS
 ### Functions implemented for text analysis
 
-I. Total words in novel: 184,377
+I. Total words in novel
 
-II. Total unique words in novel: 12,214
+II. Total unique words in novel
 
 III. 20 Most Frequent words
 
